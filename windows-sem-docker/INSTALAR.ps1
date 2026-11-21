@@ -48,12 +48,18 @@ Passo '5/7  Configurando o InfluxDB (usuario, organizacao, bucket e token)'
 $ja = $false
 try { $ja = (Test-NetConnection 127.0.0.1 -Port 8086 -WarningAction SilentlyContinue).TcpTestSucceeded } catch {}
 if (-not $ja) {
-  Start-Process $influxd -ArgumentList '--bolt-path', "$rt\influxdb-data\influxd.bolt", '--engine-path', "$rt\influxdb-data\engine", '--http-bind-address', '127.0.0.1:8086' -WindowStyle Hidden -RedirectStandardOutput "$rt\logs\influxd.out.log" -RedirectStandardError "$rt\logs\influxd.err.log"
+  Start-Process $influxd -ArgumentList '--bolt-path', "`"$rt\influxdb-data\influxd.bolt`"", '--engine-path', "`"$rt\influxdb-data\engine`"", '--http-bind-address', '127.0.0.1:8086' -WindowStyle Hidden -RedirectStandardOutput "$rt\logs\influxd.out.log" -RedirectStandardError "$rt\logs\influxd.err.log"
 }
 for ($i = 0; $i -lt 40; $i++) { try { Invoke-RestMethod http://127.0.0.1:8086/health | Out-Null; break } catch { Start-Sleep -Seconds 2 } }
 $setupOk = $true
-try { & $influx setup --host http://127.0.0.1:8086 --username $InfluxUser --password $InfluxPassword --org bueiros --bucket bueiros --token $InfluxToken --force | Out-Null } catch { $setupOk = $false }
-if ($LASTEXITCODE -ne 0) { Write-Host '    (o InfluxDB ja estava configurado - mantendo a configuracao existente)' }
+$env:INFLUX_CONFIGS_PATH = "$rt\influx-configs"   # nao mexe em configuracoes do influx CLI ja existentes no PC
+$ErrorActionPreference = 'Continue'
+$saida = & $influx setup --host http://127.0.0.1:8086 --username $InfluxUser --password $InfluxPassword --org bueiros --bucket bueiros --token $InfluxToken --force 2>&1 | Out-String
+$ErrorActionPreference = 'Stop'
+if ($LASTEXITCODE -ne 0) {
+  if ($saida -match 'already been set up|has already') { Write-Host '    (o InfluxDB ja estava configurado - mantendo a configuracao existente)' }
+  else { throw "Falha ao configurar o InfluxDB: $saida (veja runtime\logs\influxd.err.log)" }
+}
 
 Passo '6/7  Configurando o Node-RED (fluxo, credenciais e variaveis)'
 Copy-Item "$repo\docker\node-red\settings.js" "$rt\node-red-data\settings.js" -Force
