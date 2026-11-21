@@ -59,7 +59,7 @@ Os pinos podem ser trocados em `config.h` (`PIN_TRIG`, `PIN_ECHO`).
 
 Saída esperada:
 ```
-Conectando ao Wi-Fi CASA-NET ....
+Conectando ao Wi-Fi NOME_DO_SEU_WIFI ....
 Wi-Fi OK. IP: 192.168.0.57
 Conectando ao broker 192.168.0.100:1883 (Wi-Fi -60 dBm) ... OK
 [bueiros/bueiro01/nivel] {"id":"bueiro01","distancia_cm":62.4,"ts":"2026-11-20T21:27:56-03:00"}
