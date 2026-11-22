@@ -34,6 +34,19 @@ ESP32 --MQTT 1883--> broker.hivemq.com <--MQTT-- Node-RED (PC) --HTTPS--> Influx
 5. **Teste sem hardware**: `node windows-sem-docker/broker/simular.js` aponta para o broker local; para o público,
    publique em `bueiros/bueiro01/nivel` o JSON `{"id":"bueiro01","distancia_cm":25}` com qualquer cliente MQTT.
 
+## Abrir o projeto em outro computador (só o Node-RED precisa de instalação)
+
+Broker, banco e Grafana já estão na nuvem; em outro PC basta instalar o Node-RED:
+
+1. Instale o Node.js LTS (https://nodejs.org).
+2. No PowerShell:  e depois . Abra http://localhost:1880.
+3. Menu > Import > envie . No nó de configuração **InfluxDB**, cole o token e confira URL e organização. Deploy.
+4. Previsão de chuva real: antes de rodar , defina a chave:  (sem a chave o fluxo usa previsão simulada).
+5. Altura do bueiro, local e coordenadas: duplo clique na aba do fluxo > Variáveis de ambiente (padrão: 50 cm, Mackenzie-SP).
+6. O ESP32 e o Grafana Cloud não mudam; qualquer PC com internet roda o Node-RED. Só **um** Node-RED deve ficar ligado por vez (dois gravariam leituras em duplicidade).
+
+Alternativa com Docker:  do repositório já traz o Node-RED pronto.
+
 ## Observações
 
 - O HiveMQ público não tem senha: qualquer pessoa pode ler ou publicar nos tópicos `bueiros/...`. É aceitável
