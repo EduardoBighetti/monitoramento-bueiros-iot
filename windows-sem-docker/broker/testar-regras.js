@@ -4,11 +4,11 @@
 // publicado em bueiros/{id}/risco com o esperado. Tambem mede a latencia e testa o aviso offline.
 //
 // Uso (com a pilha ligada):
-//   node testar-regras.js [altura_do_bueiro_cm] [host]      ex.: node testar-regras.js 100 127.0.0.1
-// A altura precisa ser a mesma do fluxo (BUEIRO_ALTURA_CM; padrao do repositorio: 100).
+//   node testar-regras.js [altura_do_bueiro_cm] [host]      ex.: node testar-regras.js 50 127.0.0.1
+// A altura precisa ser a mesma do fluxo (BUEIRO_ALTURA_CM; padrao do repositorio: 50).
 const mqtt = require('mqtt');
 const http = require('http');
-const ALT = Number(process.argv[2] || 100);
+const ALT = Number(process.argv[2] || 50);
 const HOST = process.argv[3] || '127.0.0.1';
 const c = mqtt.connect('mqtt://' + HOST + ':1883');
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -39,20 +39,20 @@ async function caso(id, d, esperado, rotulo) {
   res.push(await caso('t_normal', dist(20), 'normal', 'Nivel baixo (20%)'));
   res.push(await caso('t_atencao', dist(60), 'atencao', 'Nivel medio (60%)'));
   res.push(await caso('t_critico', dist(83.3), 'critico', 'Nivel alto (83,3%)'));
-  res.push(await caso('t_lim50', dist(50), 'atencao', 'Limite de 50%'));
+  res.push(await caso('t_lim40', dist(40), 'atencao', 'Limite de 40%'));
   res.push(await caso('t_lim80', dist(80), 'critico', 'Limite de 80%'));
-  res.push(await caso('t_subida', dist(20), 'normal', 'Subida rapida: leitura 1 (20%)'));
-  res.push(await caso('t_subida', dist(40), 'atencao', 'Subida rapida: leitura 2 (40%)'));
+  res.push(await caso('t_subida', dist(10), 'normal', 'Subida rapida: leitura 1 (10%)'));
+  res.push(await caso('t_subida', dist(30), 'atencao', 'Subida rapida: leitura 2 (30%)'));
   res.push(await caso('t_fora1', 500, 'descartada', 'Distancia acima da faixa do sensor'));
   res.push(await caso('t_fora2', 1, 'descartada', 'Distancia abaixo da faixa do sensor'));
-  res.push(await caso('t_fora3', ALT + 50, 'descartada', 'Nivel negativo'));
+  res.push(await caso('t_fora3', ALT + 50, 'normal', 'Distancia maior que a altura (bueiro vazio)'));
   await inject('inj_forte'); await wait(1200);
   res.push(await caso('t_chuva_normal', dist(20), 'atencao', 'Chuva forte + nivel baixo'));
   res.push(await caso('t_chuva_atencao', dist(60), 'critico', 'Chuva forte + nivel medio'));
   await inject('inj_seca'); await wait(800);
 
   const lat = [];
-  for (let i = 0; i < 20; i++) { const r = await caso('t_lat' + i, dist(33), 'atencao', 'Latencia ' + (i + 1) + '/20'); if (r.ms != null) lat.push(r.ms); }
+  for (let i = 0; i < 20; i++) { const r = await caso('t_lat' + i, dist(60), 'atencao', 'Latencia ' + (i + 1) + '/20'); if (r.ms != null) lat.push(r.ms); }
 
   // aviso offline (Last Will): conexao derrubada sem desconectar direito
   const w = mqtt.connect('mqtt://' + HOST + ':1883', { clientId: 't_off', will: { topic: 'bueiros/t_off/status', payload: 'offline', retain: true, qos: 1 } });

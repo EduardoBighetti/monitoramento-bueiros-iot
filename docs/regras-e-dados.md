@@ -11,14 +11,14 @@
 ## Cálculo do nível
 
 ```
-nivel_cm  = altura_do_bueiro - distancia_cm        (altura padrão: 100 cm, variável BUEIRO_ALTURA_CM)
+nivel_cm  = altura_do_bueiro - distancia_cm        (altura padrão: 50 cm, variável BUEIRO_ALTURA_CM)
 nivel_pct = nivel_cm / altura_do_bueiro * 100
 ```
 
 | nivel_pct | Estado base |
 |---|---|
-| < 50 % | `normal` |
-| 50 % a < 80 % | `atencao` |
+| < 40 % | `normal` |
+| 40 % a < 80 % | `atencao` |
 | ≥ 80 % | `critico` |
 
 ## Ajustes sobre o estado base (cada um sobe **um** nível, no máximo até `critico`)
@@ -28,7 +28,7 @@ nivel_pct = nivel_cm / altura_do_bueiro * 100
 
 ## Validações
 - Distância fora de **2 a 400 cm** (faixa do HC-SR04) → leitura **descartada**.
-- Nível negativo (sensor mais longe que a altura do bueiro) → **descartada**.
+- Distância maior que a altura do bueiro → nível 0 % (bueiro vazio), estado normal.
 - Previsão de chuva com mais de **1 hora** → ignorada.
 - Falha na API do tempo → mantém o último valor válido e registra aviso.
 - Dispositivo `offline` → evento registrado no Node-RED.
@@ -48,7 +48,7 @@ from(bucket: "bueiros")
 ```
 
 ## Dashboard do Grafana
-Atualiza a cada 10 s. Painéis: nível ao longo do tempo (com linhas de limite em 50 % e 80 %), status de alerta atual, gauge do nível, chuva prevista × nível, histórico de estados, contagem de eventos críticos e tabela das últimas leituras.
+Atualiza a cada 10 s. Painéis: nível ao longo do tempo (com linhas de limite em 40 % e 80 %), status de alerta atual, gauge do nível, chuva prevista × nível, histórico de estados, contagem de eventos críticos e tabela das últimas leituras.
 
 O arquivo importável está em `grafana/bueiros-dashboard.json` (*Dashboards → New → Import*), usando um datasource InfluxDB chamado **InfluxDB-Bueiros** (uid `influx-bueiros`, linguagem Flux, org `bueiros`, bucket `bueiros`).
 

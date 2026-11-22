@@ -18,6 +18,18 @@ flowchart LR
 
 ---
 
+## Como fica funcionando
+
+Protótipo montado (ESP32 + HC-SR04) e diagrama de ligação:
+
+<p align="center"><img src="docs/imagens/dispositivo-montado.jpg" alt="Protótipo montado" height="360"> &nbsp; <img src="docs/imagens/diagrama-ligacao.png" alt="Diagrama de ligação" height="360"></p>
+
+Dashboard do Grafana nos três estados de risco (**normal**, **atenção** e **crítico**), obtidos aproximando um objeto do sensor:
+
+![Grafana - normal](docs/imagens/grafana-normal.png)
+![Grafana - atenção](docs/imagens/grafana-atencao.png)
+![Grafana - crítico](docs/imagens/grafana-critico.png)
+
 ## Sumário
 1. [O que você precisa](#1-o-que-você-precisa)
 2. [Baixar o projeto](#2-baixar-o-projeto)
@@ -94,7 +106,7 @@ O `INSTALAR.ps1` baixa e configura sozinho: broker MQTT (Aedes), Node-RED, Influ
 
 ## 5. Testar sem hardware (simulador)
 
-Com a pilha no ar e o **Grafana** aberto, rode o simulador. Ele faz o papel do ESP32 e simula a água subindo e descendo (bueiro de 100 cm):
+Com a pilha no ar e o **Grafana** aberto, rode o simulador. Ele faz o papel do ESP32 e simula a água subindo e descendo (bueiro de 50 cm):
 
 **Opção A (Docker)**
 ```powershell
@@ -110,13 +122,13 @@ node simular.js
 
 Você verá `publicado: {...}` a cada 5 s. Em até 10 s o Grafana mostra o bueiro `simulado01` passando por **Normal → Atenção → Crítico → Atenção → Normal**.
 
-Para escolher as distâncias: `.\scripts\simular.ps1 -Distancias 80,40,15` (Docker) ou `node simular.js 127.0.0.1 80 40 15` (Opção B).
+Para escolher as distâncias: `.\scripts\simular.ps1 -Distancias 45,25,8` (Docker) ou `node simular.js 127.0.0.1 45 25 8` (Opção B).
 
 | Distância do sensor à água | Nível | Estado |
 |---|---|---|
-| 80 cm | 20 % | normal |
-| 40 cm | 60 % | atenção |
-| 15 cm | 85 % | crítico |
+| 45 cm | 10 % | normal |
+| 25 cm | 50 % | atenção |
+| 8 cm | 84 % | crítico |
 
 ## 6. Montar e gravar o ESP32 (opcional)
 
@@ -162,15 +174,15 @@ Para **demonstrar a regra da chuva** sem esperar o tempo mudar, use no Node-RED 
 ## Regras de negócio
 
 - **Nível** = altura do bueiro − distância medida; **%** = nível ÷ altura.
-- **Estado:** `normal` (< 50 %) · `atenção` (50 % a < 80 %) · `crítico` (≥ 80 %).
+- **Estado:** `normal` (< 40 %) · `atenção` (40 % a < 80 %) · `crítico` (≥ 80 %).
 - **Chuva:** probabilidade ≥ 70 % **ou** volume ≥ 2,5 mm → sobe **um nível** de risco.
 - **Subida rápida:** ≥ 15 pontos percentuais em 5 min → sobe **um nível**.
-- **Previsão antiga** (mais de 1 h) é ignorada. **Leitura inválida** (fora de 2–400 cm ou nível negativo) é descartada. Evento **offline** do dispositivo é registrado.
+- **Previsão antiga** (mais de 1 h) é ignorada. **Leitura inválida** (fora de 2–400 cm) é descartada; distância maior que a altura do bueiro vale nível 0 % (bueiro vazio). Evento **offline** do dispositivo é registrado.
 - O risco calculado volta ao broker em `bueiros/{id}/risco` (retido).
 
 Mais detalhes (tópicos, formato JSON, measurements do InfluxDB): [docs/regras-e-dados.md](docs/regras-e-dados.md).
 
-Para repetir os casos de teste das regras (nível, chuva, subida rápida, leituras inválidas, offline e latência) com a pilha ligada: `cd windows-sem-docker/broker` e `node testar-regras.js 100` (100 = altura do bueiro em cm, a mesma do fluxo).
+Para repetir os casos de teste das regras (nível, chuva, subida rápida, leituras inválidas, offline e latência) com a pilha ligada: `cd windows-sem-docker/broker` e `node testar-regras.js 50` (50 = altura do bueiro em cm, a mesma do fluxo).
 
 Documentação acadêmica completa do projeto (artigo): [docs/Artigo_Monitoramento_Bueiros_IoT.docx](docs/Artigo_Monitoramento_Bueiros_IoT.docx).
 
@@ -197,7 +209,7 @@ Lista completa em [docs/solucao-de-problemas.md](docs/solucao-de-problemas.md). 
 
 - **Grafana sem dados** → o simulador/ESP32 não está publicando, ou o intervalo no canto superior direito é curto demais (escolha *Last 1 hour*).
 - **ESP32 não conecta no MQTT** → `MQTT_HOST` errado (use o IP atual do computador), firewall da porta 1883, ou computador e ESP32 em redes diferentes.
-- **Todas as leituras descartadas** → a distância medida é maior que a altura do bueiro (`BUEIRO_ALTURA_CM`); aproxime um objeto do sensor ou aumente a altura.
+- **Sempre "normal" / 0 %** → a distância medida é maior que a altura do bueiro (`BUEIRO_ALTURA_CM`, padrão 50 cm); aproxime um objeto do sensor ou aumente a altura.
 - **Chuva sempre 20 %** → falta a chave do OpenWeatherMap (passo 7).
 
 ## Licença e créditos

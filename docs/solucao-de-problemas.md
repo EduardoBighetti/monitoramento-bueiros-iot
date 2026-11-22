@@ -11,7 +11,7 @@
 | Grafana abre mas todos os painéis dizem "No data" | ainda não chegou nenhuma leitura, ou intervalo curto | rode o simulador (README, passo 5) e escolha *Last 1 hour* no canto superior direito |
 | Grafana: erro de datasource / 401 | token do Grafana diferente do token do InfluxDB | confira `INFLUX_TOKEN` no `.env` e rode `docker compose up -d --force-recreate` |
 | Node-RED: nó do InfluxDB com erro | token errado | mesmo `INFLUX_TOKEN` do `.env` |
-| Node-RED: aviso "Nivel negativo descartado" | distância medida maior que a altura do bueiro | aproxime um objeto do sensor ou aumente `BUEIRO_ALTURA_CM` (Variáveis de Ambiente da aba) |
+| Grafana sempre em "normal" / 0 % | distância medida maior que a altura do bueiro (50 cm por padrão) = bueiro vazio | aproxime um objeto do sensor (menos de 50 cm) ou ajuste `BUEIRO_ALTURA_CM` |
 | Node-RED: aviso "Leitura fora da faixa do sensor" | distância < 2 cm ou > 400 cm | normal — a leitura é descartada de propósito |
 | Chuva sempre 20 % | falta a chave do OpenWeatherMap | README, passo 7 |
 | OpenWeatherMap: aviso "(401)" | chave errada ou ainda não ativada | espere até 2 h após criar a chave e confira se copiou inteira |
