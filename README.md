@@ -30,6 +30,14 @@ Dashboard do Grafana nos três estados de risco (**normal**, **atenção** e **c
 ![Grafana - atenção](docs/imagens/grafana-atencao.png)
 ![Grafana - crítico](docs/imagens/grafana-critico.png)
 
+## Vídeo de demonstração
+
+> Link do vídeo no YouTube: **COLE_AQUI_O_LINK_DO_YOUTUBE**
+
+## Topologia em nuvem (atende ao enunciado)
+
+Broker MQTT (HiveMQ), Node-RED (PC), InfluxDB Cloud e Grafana Cloud em servidores distintos, com FQDN e IP de cada um. Veja [docs/modo-nuvem.md](docs/modo-nuvem.md). A pilha local abaixo continua válida para rodar tudo offline.
+
 ## Sumário
 1. [O que você precisa](#1-o-que-você-precisa)
 2. [Baixar o projeto](#2-baixar-o-projeto)

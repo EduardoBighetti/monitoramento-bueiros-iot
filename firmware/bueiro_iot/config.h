@@ -6,7 +6,7 @@
 #define WIFI_PASSWORD       "SUA_SENHA_AQUI"
 
 // ---------- Broker MQTT ----------
-#define MQTT_HOST           "192.168.0.100"      // broker MQTT local (PC com Node-RED), na mesma rede do ESP32
+#define MQTT_HOST           "broker.hivemq.com"  // broker MQTT publico na nuvem (HiveMQ). Para a pilha local, use o IP do PC
 #define MQTT_PORT           1883
 #define MQTT_USER           ""                  // deixe vazio se o broker não exigir autenticação
 #define MQTT_PASSWORD       ""
