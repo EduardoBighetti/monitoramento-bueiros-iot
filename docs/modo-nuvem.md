@@ -39,13 +39,13 @@ ESP32 --MQTT 1883--> broker.hivemq.com <--MQTT-- Node-RED (PC) --HTTPS--> Influx
 Broker, banco e Grafana já estão na nuvem; em outro PC basta instalar o Node-RED:
 
 1. Instale o Node.js LTS (https://nodejs.org).
-2. No PowerShell:  e depois . Abra http://localhost:1880.
-3. Menu > Import > envie . No nó de configuração **InfluxDB**, cole o token e confira URL e organização. Deploy.
-4. Previsão de chuva real: antes de rodar , defina a chave:  (sem a chave o fluxo usa previsão simulada).
+2. No PowerShell: `npm install -g node-red node-red-contrib-influxdb` e depois `node-red`. Abra http://localhost:1880.
+3. Menu > Import > envie `node-red/flows-nuvem.json`. No nó de configuração **InfluxDB**, cole o token e confira URL e organização. Deploy.
+4. Previsão de chuva real: antes de rodar `node-red`, defina a chave: `$env:OPENWEATHER_KEY="SUA_CHAVE"` (sem a chave o fluxo usa previsão simulada).
 5. Altura do bueiro, local e coordenadas: duplo clique na aba do fluxo > Variáveis de ambiente (padrão: 50 cm, Mackenzie-SP).
 6. O ESP32 e o Grafana Cloud não mudam; qualquer PC com internet roda o Node-RED. Só **um** Node-RED deve ficar ligado por vez (dois gravariam leituras em duplicidade).
 
-Alternativa com Docker:  do repositório já traz o Node-RED pronto.
+Alternativa com Docker: a pasta docker/ do repositório já traz o Node-RED pronto.
 
 ## Observações
 
