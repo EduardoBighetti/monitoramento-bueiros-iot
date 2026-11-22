@@ -170,6 +170,8 @@ Para **demonstrar a regra da chuva** sem esperar o tempo mudar, use no Node-RED 
 
 Mais detalhes (tópicos, formato JSON, measurements do InfluxDB): [docs/regras-e-dados.md](docs/regras-e-dados.md).
 
+Documentação acadêmica completa do projeto (artigo): [docs/Artigo_Monitoramento_Bueiros_IoT.docx](docs/Artigo_Monitoramento_Bueiros_IoT.docx).
+
 ## Estrutura do repositório
 
 ```
