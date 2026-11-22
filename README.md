@@ -170,6 +170,8 @@ Para **demonstrar a regra da chuva** sem esperar o tempo mudar, use no Node-RED 
 
 Mais detalhes (tópicos, formato JSON, measurements do InfluxDB): [docs/regras-e-dados.md](docs/regras-e-dados.md).
 
+Para repetir os casos de teste das regras (nível, chuva, subida rápida, leituras inválidas, offline e latência) com a pilha ligada: `cd windows-sem-dockerroker` e `node testar-regras.js 100` (100 = altura do bueiro em cm, a mesma do fluxo).
+
 Documentação acadêmica completa do projeto (artigo): [docs/Artigo_Monitoramento_Bueiros_IoT.docx](docs/Artigo_Monitoramento_Bueiros_IoT.docx).
 
 ## Estrutura do repositório
